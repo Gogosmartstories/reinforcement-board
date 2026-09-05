@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#8f1747" />
+  <title>سباق التميز | الصف التاسع</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero hero-poster">
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="sr-only">
+      <p>هند بنت عُتبة الإعدادية للبنات</p>
+      <h1>سباق التميز</h1>
+      <p>كل نقطة... خطوة نحو القمة</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="toolbar card">
+      <label>المعلمة
+        <select id="teacherSelect">
+          <option value="">جارٍ تحميل المعلمات...</option>
+        </select>
+      </label>
+      <label>المادة
+        <select id="subjectSelect" disabled>
+          <option value="">—</option>
+        </select>
+      </label>
+      <label>الشعبة
+        <select id="sectionSelect" disabled>
+          <option value="">—</option>
+        </select>
+      </label>
+      <label class="search-label">البحث عن طالبة
+        <input id="searchInput" type="search" placeholder="اكتبي الاسم الأول أو العائلة" autocomplete="off" />
+      </label>
+      <button id="refreshBtn" class="btn ghost" type="button">↻ تحديث</button>
+    </section>
+
+    <section class="stats">
+      <article><span>👩🏻‍🎓</span><div><small>عدد الطالبات</small><strong id="studentCount">—</strong></div></article>
+      <article><span>⭐</span><div><small>مجموع النقاط</small><strong id="totalPoints">—</strong></div></article>
+      <article><span>✨</span><div><small>مرات التعزيز</small><strong id="rewardEvents">—</strong></div></article>
+      <article><span>🏆</span><div><small>المتصدرة</small><strong id="topStudent">—</strong></div></article>
+    </section>
+
+    <section class="content">
+      <section class="card panel">
+        <div class="heading"><div><small>طالبات الشعبة</small><h2 id="sectionTitle">تاسع 1</h2></div><span id="visibleCount" class="pill">— طالبة</span></div>
+        <div id="studentsGrid" class="students"></div>
+        <div id="emptyState" class="empty hidden">لا توجد نتائج مطابقة.</div>
+      </section>
+
+      <aside class="card panel ranking-panel">
+        <div class="heading"><div><small>ترتيب الشعبة</small><h2>الأكثر تميزًا</h2></div><span class="pill pink">تراكمي</span></div>
+        <div id="rankingList" class="ranking"></div>
+      </aside>
+    </section>
+  </main>
+
+  <div id="modalBackdrop" class="backdrop hidden" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalStudentName">
+      <button id="closeModalBtn" class="close" type="button">×</button>
+      <div class="student-head"><div id="modalAvatar" class="avatar big">ط</div><div><small>تعزيز الطالبة</small><h2 id="modalStudentName">—</h2><p id="modalStudentFullName">—</p></div></div>
+      <div class="summary"><div><small>النقاط</small><strong id="modalPoints">0</strong></div><div><small>مرات التعزيز</small><strong id="modalEvents">0</strong></div></div>
+
+      <label class="modal-label">نوع التعزيز</label>
+      <div id="rewardTypes" class="choices">
+        <button class="choice active" data-reward="مشاركة" type="button">🙋🏻‍♀️ مشاركة</button>
+        <button class="choice" data-reward="إبداع" type="button">💡 إبداع</button>
+        <button class="choice" data-reward="تعاون" type="button">🤝 تعاون</button>
+        <button class="choice" data-reward="التزام" type="button">✅ التزام</button>
+        <button class="choice" data-reward="تميز" type="button">🌟 تميز</button>
+      </div>
+
+      <label class="modal-label">النقاط</label>
+      <div id="pointsChoices" class="points">
+        <button class="point active" data-points="1" type="button">+1</button>
+        <button class="point" data-points="2" type="button">+2</button>
+        <button class="point" data-points="3" type="button">+3</button>
+      </div>
+
+      <label class="modal-label" for="noteInput">ملاحظة <small>(اختياري)</small></label>
+      <input id="noteInput" class="note" maxlength="120" placeholder="مثال: إجابة متميزة أثناء النشاط" />
+
+      <div class="actions">
+        <button id="submitRewardBtn" class="btn primary" type="button">✦ تسجيل التعزيز</button>
+        <button id="undoRewardBtn" class="btn danger" type="button">↶ التراجع عن آخر تعزيز</button>
+      </div>
+
+      <div class="history-box">
+        <div class="history-head"><strong>آخر التعزيزات</strong><small id="historyStatus">—</small></div>
+        <div id="historyList" class="history"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
