@@ -11,14 +11,30 @@ const el = Object.fromEntries([
   'rewardTypes','pointsChoices','noteInput','submitRewardBtn','undoRewardBtn','historyStatus','historyList','toast'
 ].map(id=>[id,document.getElementById(id)]));
 
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init, { once:true });
+} else {
+  init();
+}
 
-async function init(){ bindEvents(); await loadTeachers(); }
+async function init(){
+  try {
+    bindEvents();
+    await loadTeachers();
+  } catch (e) {
+    console.error('Initialization error:', e);
+    showToast(e?.message || 'تعذر تشغيل الواجهة.', true);
+  }
+}
 
 function bindEvents(){
+  if(!el.teacherSelect || !el.subjectSelect || !el.sectionSelect){
+    throw new Error('تعذر العثور على قوائم المعلمة أو المادة أو الشعبة في الصفحة.');
+  }
+  el.teacherSelect.disabled = false;
   el.teacherSelect.addEventListener('change', async e=>{ await selectTeacher(e.target.value); });
   el.subjectSelect.addEventListener('change', async e=>{ await selectSubject(e.target.value); });
-  el.sectionSelect.addEventListener('change', async e=>{ state.section=e.target.value; el.searchInput.value=''; await loadSection(); });
+  el.sectionSelect.addEventListener('change', async e=>{ state.section=e.target.value; if(el.searchInput) el.searchInput.value=''; await loadSection(); });
   el.searchInput.addEventListener('input', renderStudents);
   el.refreshBtn.addEventListener('click', ()=>{ if(state.section) loadSection(); });
   el.closeModalBtn.addEventListener('click', closeModal);
@@ -47,11 +63,20 @@ async function apiPost(payload){
 
 async function loadTeachers(){
   setBoardEnabled(false);
+  el.teacherSelect.disabled = true;
+  el.teacherSelect.innerHTML='<option value="">جارٍ تحميل المعلمات...</option>';
   try{
     const d=await apiGet({action:'teachers'});
     const teachers=Array.isArray(d.teachers)?d.teachers:[];
+    if(!teachers.length) throw new Error('لم يتم العثور على معلمات مفعّلات.');
     el.teacherSelect.innerHTML='<option value="">اختاري المعلمة</option>'+teachers.map(t=>`<option value="${escapeAttr(t.Teacher_ID)}">${escapeHtml(t.Teacher_Name)}</option>`).join('');
-  }catch(e){ el.teacherSelect.innerHTML='<option value="">تعذر تحميل المعلمات</option>'; showToast(e.message,true); }
+    el.teacherSelect.disabled = false;
+  }catch(e){
+    el.teacherSelect.innerHTML='<option value="">تعذر تحميل المعلمات</option>';
+    el.teacherSelect.disabled = false;
+    showToast(e.message,true);
+    console.error(e);
+  }
 }
 
 async function selectTeacher(teacherId){
@@ -82,7 +107,7 @@ async function selectSubject(subjectId){
   else { setBoardEnabled(false); resetBoardData(); }
 }
 
-function setBoardEnabled(on){ el.searchInput.disabled=!on; el.refreshBtn.disabled=!on; }
+function setBoardEnabled(on){ if(el.searchInput) el.searchInput.disabled=!on; if(el.refreshBtn) el.refreshBtn.disabled=!on; }
 function resetBoard(){ state.subjectId='';state.subjectName='';state.section=''; el.subjectSelect.innerHTML='<option value="">—</option>';el.subjectSelect.disabled=true;el.sectionSelect.innerHTML='<option value="">—</option>';el.sectionSelect.disabled=true;if(el.subjectName)el.subjectName.textContent='اختاري المعلمة لعرض المادة';resetBoardData();setBoardEnabled(false); }
 function resetBoardData(){ state.students=[];state.ranking=[];updateStats({});renderStudents();renderRanking();el.sectionTitle.textContent='اختاري الشعبة'; }
 
