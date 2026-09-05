@@ -11,7 +11,7 @@ body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--text);b
   linear-gradient(180deg,#fffaf6 0%,#f8f2f1 100%)}
 button,input,select{font:inherit}.hidden{display:none!important}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
-.hero-poster{position:relative;aspect-ratio:16/9;min-height:0;max-height:none;background-image:url('hero-sibaq-v2.png');background-size:cover;background-position:center center;background-repeat:no-repeat;border-bottom:1px solid rgba(87,11,40,.18);box-shadow:0 16px 38px rgba(87,11,40,.16);overflow:hidden}
+.hero-poster{position:relative;aspect-ratio:16/9;min-height:0;max-height:none;background-image:url('hero-sibaq.png');background-size:cover;background-position:center center;background-repeat:no-repeat;border-bottom:1px solid rgba(87,11,40,.18);box-shadow:0 16px 38px rgba(87,11,40,.16);overflow:hidden}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(87,11,40,.04),transparent 35%,transparent 70%,rgba(87,11,40,.05));pointer-events:none}
 .hero-live{position:absolute;inset:0;max-width:1440px;margin:auto;pointer-events:none}
 .hero-live-card{position:absolute;right:8.2%;bottom:8.5%;display:flex;align-items:center;gap:10px;min-width:225px;max-width:330px;padding:12px 15px;border-radius:18px;background:rgba(81,7,35,.72);border:1px solid rgba(255,220,156,.34);box-shadow:0 12px 34px rgba(49,4,22,.28);backdrop-filter:blur(10px);color:#fff;pointer-events:auto}
@@ -39,3 +39,86 @@ button,input,select{font:inherit}.hidden{display:none!important}.sr-only{positio
 /* Hero V3 — يمنع أي تداخل مع عناصر التصميم المدمجة داخل الصورة */
 .hero-live,.hero-live-card{display:none!important}
 @media(max-width:760px){.hero-poster{aspect-ratio:auto;min-height:300px;background-size:cover;background-position:center center}.container{margin:-18px auto 42px}}
+
+
+/* ===== V9 FINAL FIXES ===== */
+
+/* Crop the old image before the decorative fake controls at its bottom.
+   The real teacher / subject / section controls are the HTML toolbar below. */
+.hero-poster{
+  aspect-ratio:auto !important;
+  height:clamp(300px,35vw,620px) !important;
+  min-height:0 !important;
+  background-size:100% auto !important;
+  background-position:center top !important;
+}
+
+/* Cover the two decorative "fake selector" areas baked into the hero artwork.
+   These are visual patches only and never intercept clicks. */
+.hero-clean-patch{
+  position:absolute;
+  z-index:2;
+  pointer-events:none;
+}
+.hero-clean-patch-left{
+  left:2.5%;
+  top:4.8%;
+  width:17.5%;
+  height:11%;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 70% 35%,rgba(146,27,66,.30),transparent 45%),
+    linear-gradient(120deg,#820f38 0%,#6f0b31 48%,#7d1038 100%);
+  box-shadow:inset 0 0 24px rgba(255,255,255,.025);
+}
+.hero-clean-patch-text{
+  right:7.5%;
+  top:50%;
+  width:31%;
+  height:7.5%;
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 30% 50%,rgba(135,18,57,.26),transparent 50%),
+    linear-gradient(90deg,#650a2c 0%,#6d0b30 55%,#780f35 100%);
+}
+
+/* toolbar stays clearly separate from the poster */
+.container{margin:-24px auto 52px}
+.toolbar{position:relative;z-index:8}
+
+/* connection feedback */
+.connection-status{
+  margin:10px 0 0;
+  padding:10px 14px;
+  border-radius:13px;
+  font-size:.84rem;
+  font-weight:700;
+  border:1px solid #ead9dc;
+  background:#fff9f6;
+  color:#75545f;
+}
+.connection-status.warn{background:#fff7df;border-color:#efd9a2;color:#8a640b}
+.connection-status.error{background:#fff0f1;border-color:#eccfd4;color:#9b3446}
+
+/* preserve current data while a background refresh is happening */
+.panel.is-refreshing{opacity:.94}
+.btn.is-loading{pointer-events:none}
+
+@media(max-width:980px){
+  .hero-poster{
+    height:clamp(270px,42vw,450px) !important;
+    background-size:auto 100% !important;
+    background-position:center top !important;
+  }
+  .hero-clean-patch-left{left:0;width:22%;height:12%}
+  .hero-clean-patch-text{display:none}
+}
+@media(max-width:700px){
+  .hero-poster{
+    height:300px !important;
+    background-size:auto 100% !important;
+    background-position:center top !important;
+  }
+  .hero-clean-patch-left{display:none}
+  .container{margin:-14px auto 40px}
+}
