@@ -55,32 +55,9 @@ button,input,select{font:inherit}.hidden{display:none!important}.sr-only{positio
 
 /* Cover the two decorative "fake selector" areas baked into the hero artwork.
    These are visual patches only and never intercept clicks. */
-.hero-clean-patch{
-  position:absolute;
-  z-index:2;
-  pointer-events:none;
-}
-.hero-clean-patch-left{
-  left:2.5%;
-  top:4.8%;
-  width:17.5%;
-  height:11%;
-  border-radius:22px;
-  background:
-    radial-gradient(circle at 70% 35%,rgba(146,27,66,.30),transparent 45%),
-    linear-gradient(120deg,#820f38 0%,#6f0b31 48%,#7d1038 100%);
-  box-shadow:inset 0 0 24px rgba(255,255,255,.025);
-}
-.hero-clean-patch-text{
-  right:7.5%;
-  top:50%;
-  width:31%;
-  height:7.5%;
-  border-radius:20px;
-  background:
-    radial-gradient(circle at 30% 50%,rgba(135,18,57,.26),transparent 50%),
-    linear-gradient(90deg,#650a2c 0%,#6d0b30 55%,#780f35 100%);
-}
+
+
+
 
 /* toolbar stays clearly separate from the poster */
 .container{margin:-24px auto 52px}
@@ -110,8 +87,7 @@ button,input,select{font:inherit}.hidden{display:none!important}.sr-only{positio
     background-size:auto 100% !important;
     background-position:center top !important;
   }
-  .hero-clean-patch-left{left:0;width:22%;height:12%}
-  .hero-clean-patch-text{display:none}
+  }
 }
 @media(max-width:700px){
   .hero-poster{
@@ -119,6 +95,6 @@ button,input,select{font:inherit}.hidden{display:none!important}.sr-only{positio
     background-size:auto 100% !important;
     background-position:center top !important;
   }
-  .hero-clean-patch-left{display:none}
+ 
   .container{margin:-14px auto 40px}
 }
