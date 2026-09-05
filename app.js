@@ -56,11 +56,11 @@ async function loadTeachers(){
 
 async function selectTeacher(teacherId){
   resetBoard(); state.teacherId=teacherId; state.teacherName=''; state.assignments=[];
-  if(!teacherId){ el.teacherName.textContent='—'; return; }
+  if(!teacherId){ if(el.teacherName) el.teacherName.textContent='—'; return; }
   try{
     const d=await apiGet({action:'assignments',teacherId});
     state.teacherName=d.teacherName||''; state.assignments=Array.isArray(d.assignments)?d.assignments:[];
-    el.teacherName.textContent=state.teacherName||'—';
+    if (el.teacherName) el.teacherName.textContent=state.teacherName||'—';
     const subjects=[...new Map(state.assignments.map(a=>[a.subjectId,{id:a.subjectId,name:a.subjectName}])).values()];
     el.subjectSelect.innerHTML=subjects.map(s=>`<option value="${escapeAttr(s.id)}">${escapeHtml(s.name)}</option>`).join('');
     el.subjectSelect.disabled=!subjects.length;
@@ -73,7 +73,7 @@ async function selectSubject(subjectId){
   state.subjectId=subjectId;
   const matching=state.assignments.filter(a=>a.subjectId===subjectId);
   state.subjectName=matching[0]?.subjectName||'';
-  el.subjectName.textContent=state.subjectName||'—';
+  if (el.subjectName) el.subjectName.textContent=state.subjectName||'—';
   const sections=[...new Set(matching.map(a=>a.section))].sort(sectionSort);
   el.sectionSelect.innerHTML=sections.map(s=>`<option value="${escapeAttr(s)}">${escapeHtml(s)}</option>`).join('');
   el.sectionSelect.disabled=!sections.length;
@@ -83,7 +83,7 @@ async function selectSubject(subjectId){
 }
 
 function setBoardEnabled(on){ el.searchInput.disabled=!on; el.refreshBtn.disabled=!on; }
-function resetBoard(){ state.subjectId='';state.subjectName='';state.section=''; el.subjectSelect.innerHTML='<option value="">—</option>';el.subjectSelect.disabled=true;el.sectionSelect.innerHTML='<option value="">—</option>';el.sectionSelect.disabled=true;el.subjectName.textContent='اختاري المعلمة لعرض المادة';resetBoardData();setBoardEnabled(false); }
+function resetBoard(){ state.subjectId='';state.subjectName='';state.section=''; el.subjectSelect.innerHTML='<option value="">—</option>';el.subjectSelect.disabled=true;el.sectionSelect.innerHTML='<option value="">—</option>';el.sectionSelect.disabled=true;if(el.subjectName)el.subjectName.textContent='اختاري المعلمة لعرض المادة';resetBoardData();setBoardEnabled(false); }
 function resetBoardData(){ state.students=[];state.ranking=[];updateStats({});renderStudents();renderRanking();el.sectionTitle.textContent='اختاري الشعبة'; }
 
 async function loadSection(){
