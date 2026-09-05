@@ -11,7 +11,7 @@ body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--text);b
   linear-gradient(180deg,#fffaf6 0%,#f8f2f1 100%)}
 button,input,select{font:inherit}.hidden{display:none!important}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
-.hero-poster{position:relative;aspect-ratio:16/9;min-height:0;max-height:none;background-image:url('hero-sibaq.png');background-size:cover;background-position:center center;background-repeat:no-repeat;border-bottom:1px solid rgba(87,11,40,.18);box-shadow:0 16px 38px rgba(87,11,40,.16);overflow:hidden}
+.hero-poster{position:relative;aspect-ratio:16/9;min-height:0;max-height:none;background-image:url('hero-sibaq-v2.png');background-size:cover;background-position:center center;background-repeat:no-repeat;border-bottom:1px solid rgba(87,11,40,.18);box-shadow:0 16px 38px rgba(87,11,40,.16);overflow:hidden}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(87,11,40,.04),transparent 35%,transparent 70%,rgba(87,11,40,.05));pointer-events:none}
 .hero-live{position:absolute;inset:0;max-width:1440px;margin:auto;pointer-events:none}
 .hero-live-card{position:absolute;right:8.2%;bottom:8.5%;display:flex;align-items:center;gap:10px;min-width:225px;max-width:330px;padding:12px 15px;border-radius:18px;background:rgba(81,7,35,.72);border:1px solid rgba(255,220,156,.34);box-shadow:0 12px 34px rgba(49,4,22,.28);backdrop-filter:blur(10px);color:#fff;pointer-events:auto}
