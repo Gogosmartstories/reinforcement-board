@@ -529,6 +529,21 @@ function resetChoices() {
     .forEach(button => button.classList.toggle('active', button.dataset.points === '1'));
 }
 
+function playSound(id) {
+  const sound = document.getElementById(id);
+  if (!sound) return;
+
+  sound.pause();
+  sound.currentTime = 0;
+
+  const playPromise = sound.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(error => {
+      console.warn(`تعذر تشغيل الصوت ${id}:`, error);
+    });
+  }
+}
+
 async function submitReward() {
   if (!state.selectedStudent) return;
 
@@ -554,6 +569,7 @@ async function submitReward() {
 
     el.noteInput.value = '';
     showToast(`تم تسجيل ${response.pointsAdded} نقطة لـ ${state.selectedStudent.shortName}.`);
+    playSound('rewardSound');
 
     await loadHistory();
   } catch (error) {
@@ -596,6 +612,8 @@ async function undoLastReward() {
     }
 
     showToast('تم التراجع عن آخر تعزيز.');
+    playSound('undoSound');
+
     await loadHistory();
   } catch (error) {
     console.error(error);
