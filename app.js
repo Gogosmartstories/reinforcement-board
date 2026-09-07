@@ -631,14 +631,22 @@ async function resetAllRewards() {
     return;
   }
 
+  const sectionLabel = `تاسع ${String(state.section).split('/')[1] || state.section}`;
+
   const firstConfirm = confirm(
-    'تحذير: سيتم حذف جميع سجلات التعزيز لكل الطالبات في منصة الصف التاسع، وليس الشعبة الحالية فقط.\n\nهل تريدين المتابعة؟'
+    `تحذير: سيتم حذف جميع سجلات التعزيز لطالبات ${sectionLabel} فقط.
+
+لن تتأثر أي شعبة أخرى.
+
+هل تريدين المتابعة؟`
   );
 
   if (!firstConfirm) return;
 
   const secondConfirm = confirm(
-    'تأكيد نهائي: لا يمكن التراجع عن عملية التصفير بعد تنفيذها.\n\nاضغطي موافق لتصفير جميع التعزيزات.'
+    `تأكيد نهائي: سيتم تصفير تعزيزات ${sectionLabel} فقط، ولا يمكن التراجع عن العملية بعد تنفيذها.
+
+اضغطي موافق للمتابعة.`
   );
 
   if (!secondConfirm) return;
@@ -654,20 +662,19 @@ async function resetAllRewards() {
 
     const response = await apiPost({
       action: 'resetAllRewards',
-      confirmation: 'RESET_ALL_REWARDS'
+      section: state.section,
+      confirmation: 'RESET_CURRENT_SECTION'
     });
 
-    // Remove every cached dashboard so old totals cannot reappear.
     clearDashboardCaches();
 
-    showToast(response.message || 'تم تصفير جميع التعزيزات بنجاح.');
+    showToast(response.message || `تم تصفير تعزيزات ${sectionLabel}.`);
 
-    // Reload the currently selected board from the server.
     await loadSection({ force: true });
 
   } catch (error) {
     console.error(error);
-    showToast(error.message || 'تعذر تصفير التعزيزات.', true);
+    showToast(error.message || 'تعذر تصفير تعزيزات الشعبة.', true);
   } finally {
     if (button) {
       button.textContent = originalText;
