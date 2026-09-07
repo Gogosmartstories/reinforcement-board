@@ -632,11 +632,12 @@ async function resetAllRewards() {
   }
 
   const sectionLabel = `تاسع ${String(state.section).split('/')[1] || state.section}`;
+  const teacherLabel = state.teacherName || 'المعلمة المحددة';
 
   const firstConfirm = confirm(
-    `تحذير: سيتم حذف جميع سجلات التعزيز لطالبات ${sectionLabel} فقط.
+    `تحذير: سيتم حذف جميع سجلات التعزيز لطالبات ${sectionLabel} التي سجلتها ${teacherLabel} فقط.
 
-لن تتأثر أي شعبة أخرى.
+لن تتأثر تعزيزات أي معلمة أخرى في نفس الشعبة.
 
 هل تريدين المتابعة؟`
   );
@@ -644,7 +645,7 @@ async function resetAllRewards() {
   if (!firstConfirm) return;
 
   const secondConfirm = confirm(
-    `تأكيد نهائي: سيتم تصفير تعزيزات ${sectionLabel} فقط، ولا يمكن التراجع عن العملية بعد تنفيذها.
+    `تأكيد نهائي: سيتم تصفير تعزيزات ${sectionLabel} الخاصة بـ ${teacherLabel} فقط، ولا يمكن التراجع عن العملية بعد تنفيذها.
 
 اضغطي موافق للمتابعة.`
   );
@@ -663,18 +664,22 @@ async function resetAllRewards() {
     const response = await apiPost({
       action: 'resetAllRewards',
       section: state.section,
-      confirmation: 'RESET_CURRENT_SECTION'
+      teacherId: state.teacherId,
+      confirmation: 'RESET_CURRENT_SECTION_TEACHER'
     });
 
     clearDashboardCaches();
 
-    showToast(response.message || `تم تصفير تعزيزات ${sectionLabel}.`);
+    showToast(
+      response.message ||
+      `تم تصفير تعزيزات ${sectionLabel} الخاصة بـ ${teacherLabel}.`
+    );
 
     await loadSection({ force: true });
 
   } catch (error) {
     console.error(error);
-    showToast(error.message || 'تعذر تصفير تعزيزات الشعبة.', true);
+    showToast(error.message || 'تعذر تصفير تعزيزات الشعبة للمعلمة المحددة.', true);
   } finally {
     if (button) {
       button.textContent = originalText;
