@@ -21,7 +21,7 @@ const state = {
 };
 
 const ids = [
-  'teacherSelect','subjectSelect','sectionSelect','searchInput','refreshBtn',
+  'teacherSelect','subjectSelect','sectionSelect','searchInput','refreshBtn','resetAllRewardsBtn',
   'studentCount','totalPoints','rewardEvents','topStudent','sectionTitle','visibleCount',
   'studentsGrid','emptyState','rankingList','modalBackdrop','closeModalBtn','modalAvatar',
   'modalStudentName','modalStudentFullName','modalPoints','modalEvents','rewardTypes',
@@ -115,6 +115,7 @@ function bindEvents() {
 
   el.submitRewardBtn?.addEventListener('click', submitReward);
   el.undoRewardBtn?.addEventListener('click', undoLastReward);
+  el.resetAllRewardsBtn?.addEventListener('click', resetAllRewards);
 }
 
 async function apiGet(params = {}, retries = CONFIG.RETRIES) {
@@ -623,6 +624,74 @@ async function undoLastReward() {
   }
 }
 
+
+async function resetAllRewards() {
+  if (!state.teacherId || !state.subjectId || !state.section) {
+    showToast('اختاري المعلمة والمادة والشعبة أولًا.', true);
+    return;
+  }
+
+  const firstConfirm = confirm(
+    'تحذير: سيتم حذف جميع سجلات التعزيز لكل الطالبات في منصة الصف التاسع، وليس الشعبة الحالية فقط.\n\nهل تريدين المتابعة؟'
+  );
+
+  if (!firstConfirm) return;
+
+  const secondConfirm = confirm(
+    'تأكيد نهائي: لا يمكن التراجع عن عملية التصفير بعد تنفيذها.\n\nاضغطي موافق لتصفير جميع التعزيزات.'
+  );
+
+  if (!secondConfirm) return;
+
+  const button = el.resetAllRewardsBtn;
+  const originalText = button?.textContent || '🗑️ تصفير جميع التعزيزات';
+
+  try {
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'جارٍ التصفير...';
+    }
+
+    const response = await apiPost({
+      action: 'resetAllRewards',
+      confirmation: 'RESET_ALL_REWARDS'
+    });
+
+    // Remove every cached dashboard so old totals cannot reappear.
+    clearDashboardCaches();
+
+    showToast(response.message || 'تم تصفير جميع التعزيزات بنجاح.');
+
+    // Reload the currently selected board from the server.
+    await loadSection({ force: true });
+
+  } catch (error) {
+    console.error(error);
+    showToast(error.message || 'تعذر تصفير التعزيزات.', true);
+  } finally {
+    if (button) {
+      button.textContent = originalText;
+      button.disabled = !state.section;
+    }
+  }
+}
+
+function clearDashboardCaches() {
+  try {
+    const prefix = `sibaq:${CONFIG.CACHE_VERSION}:dashboard:`;
+    const keysToRemove = [];
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(prefix)) {
+        keysToRemove.push(key);
+      }
+    }
+
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+  } catch {}
+}
+
 function applyRewardLocally(studentId, points, rewardType, direction) {
   const row = state.ranking.find(x => x.studentId === studentId);
   if (!row) return;
@@ -747,6 +816,7 @@ function normalizeTimePart(value) {
 function setBoardEnabled(on) {
   if (el.searchInput) el.searchInput.disabled = !on;
   if (el.refreshBtn) el.refreshBtn.disabled = !on;
+  if (el.resetAllRewardsBtn) el.resetAllRewardsBtn.disabled = !on;
 }
 
 function resetBoard() {
@@ -777,6 +847,10 @@ function setLoading(on, preserveExisting = true) {
   if (el.refreshBtn) {
     el.refreshBtn.disabled = on || !state.section;
     el.refreshBtn.classList.toggle('is-loading', on);
+  }
+
+  if (el.resetAllRewardsBtn) {
+    el.resetAllRewardsBtn.disabled = on || !state.section;
   }
 
   if (on && !preserveExisting && !state.students.length) {
